@@ -37,21 +37,39 @@
         </div>
     </div>
       <div class="container" id="container">
-        <form id="form_contato_c" class="contact-form">
-            <h2>Contacto</h2>
-            <label for="name">Nombre:</label>
-            <input type="text" id="name" name="name" required>
 
-            <label for="email">Correo Electrónico:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="message">Mensaje:</label>
-            <textarea id="message" name="message" rows="4" required></textarea>
-
-            <button type="button" onclick="submitForm()">Enviar Mensaje</button>
-        </form>
+        <form id="form">
+            <div class="field">
+              <label for="from_name">Remitente</label>
+              <input type="text" name="from_name" id="from_name">
+            </div>
+            <div class="field">
+              <label for="to_name">Su nombre</label>
+              <input type="text" name="to_name" id="to_name">
+            </div>
+            <div class="field">
+              <label for="message">Mensaje</label>
+              <input type="text" name="message" id="message">
+            </div>
+            <div class="field">
+              <label for="reply_to">reply to</label>
+              <input type="text" name="reply_to" id="reply_to">
+            </div>
+          
+            <input type="submit" id="button" value="Send Email" >
+          </form>
+          
+        
     </div>
 </body>
+
+<script type="text/javascript"
+src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<script type="text/javascript">
+emailjs.init('HfB8yhqZG52IdOFM8')
+</script>
+
 <script src="/js/script.js"></script>
 <script src="../js/script_contacto.js"></script>
 </html>

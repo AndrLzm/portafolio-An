@@ -1,47 +1,55 @@
-// service-worker.js
+const nombreCache = "Portafolio Andres";
+const archivosCache = [
+    "/",
+    "../html/index.html",
+    "css/style.css",
+    "js/app.js",
+    "js/"
+]
 
-const CACHE_NAME = 'my-cache-v2';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/css/', // Cache all files in the 'css' directory
-  '/js/',  // Cache all files in the 'js' directory
-  '../img/icono1.jpg'
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-  );
+self.addEventListener('install', e => {
+    console.log("El SW se instaló", e);
+    e.waitUntil(
+        caches.open(nombreCache)
+        .then((cache) => {
+            console.log();
+            return cache.addAll(archivosCache);
+        })
+        .catch(error => {
+            console.error('Error durante la instalación del caché:', error);
+        })
+    );
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return the response from the cache
-        if (response) {
-          return response;
-        }
+self.addEventListener('fetch', e => {
+    console.log("Fetch...", e);
+    e.respondWith(
+        caches.match(e.request)
+        .then(respuestaCache => {
+            return respuestaCache || fetch(e.request)
+                .then(respuestaRed => {
+                    return caches.open(nombreCache)
+                        .then(cache => {
+                            cache.put(e.request, respuestaRed.clone());
+                            return respuestaRed;
+                        });
+                })
+                .catch(error => {
+                    console.error('Error al intentar recuperar el recurso:', error);
+                });
+        })
+    );
+});
 
-        // Not in cache - fetch and cache
-        return fetch(event.request).then(response => {
-          // Check if we received a valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-
-          // Clone the response and cache it
-          const responseToCache = response.clone();
-
-          caches.open(CACHE_NAME)
-            .then(cache => {
-              cache.put(event.request, responseToCache);
-            });
-
-          return response;
-        });
-      })
-  );
+self.addEventListener('activate', e => {
+    console.log("El SW está activo", e);
+    e.waitUntil(
+        caches.keys().then(keys => {
+            return Promise.all(keys.map(key => {
+                if (key !== nombreCache) {
+                    return caches.delete(key);
+                }
+            }));
+        })
+    );
 });

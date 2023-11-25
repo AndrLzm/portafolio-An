@@ -1,4 +1,25 @@
-let form = document.getElementById('form_contato_c');
+const btn = document.getElementById('button');
+
+document.getElementById('form')
+ .addEventListener('submit', function(event) {
+   event.preventDefault();
+
+   btn.value = 'Sending...';
+
+   const serviceID = 'default_service';
+   const templateID = 'template_hula69t';
+
+   emailjs.sendForm(serviceID, templateID, this)
+    .then(() => {
+      btn.value = 'Send Email';
+      alert('Sent!');
+    }, (err) => {
+      btn.value = 'Send Email';
+      alert(JSON.stringify(err));
+    });
+});
+
+let form = document.getElementById('container');
 let idleTime = 0;
 const idleInterval = 1000; // 1 segundo
 
@@ -8,7 +29,7 @@ function resetIdleTime() {
 
 function checkIdleTime() {
     idleTime += 1;
-    if (idleTime > 60) { // Cambia el valor según la cantidad de segundos que deseas para la inactividad
+    if (idleTime > 5) { // Cambia el valor según la cantidad de segundos que deseas para la inactividad
         form.classList.add('flip');
         setTimeout(() => {
             form.classList.remove('flip');
@@ -21,23 +42,3 @@ document.addEventListener('mousemove', resetIdleTime);
 document.addEventListener('keypress', resetIdleTime);
 
 setInterval(checkIdleTime, idleInterval);
-
-function submitForm() {
-    // Obtener los datos del formulario
-    const formData = new FormData(document.getElementById('form_contato_c'));
-  
-    // Enviar los datos del formulario al servidor utilizando una solicitud AJAX
-    fetch('/send_email.php', {
-      method: 'POST',
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert('¡Tu mensaje ha sido enviado!');
-        } else {
-          alert('Ha ocurrido un error. Por favor, intente nuevamente más tarde.');
-        }
-      });
-  }
-  
